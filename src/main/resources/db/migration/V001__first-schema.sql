@@ -1,45 +1,43 @@
 -- V1__Initial_schema.sql
 
-CREATE TABLE board (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+-- Tabela board
+CREATE TABLE IF NOT EXISTS board (
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
-
--- Tabela de colunas com o nome correto
-CREATE TABLE task_column (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+-- Tabela de colunas
+CREATE TABLE IF NOT EXISTS task_column (
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     order_position INT NOT NULL,
     type VARCHAR(50) NOT NULL,
     board_id BIGINT NOT NULL,
     CONSTRAINT fk_column_board FOREIGN KEY (board_id) REFERENCES board(id) ON DELETE CASCADE
 );
-
-CREATE TABLE card (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+-- Tabela card
+CREATE TABLE IF NOT EXISTS card (
+    id BIGSERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    creation_date DATETIME NOT NULL,
-    blocked BOOLEAN NOT NULL DEFAULT FALSE,
+    order_position INT NOT NULL,
     column_id BIGINT NOT NULL,
-    CONSTRAINT fk_card_column FOREIGN KEY (column_id) REFERENCES task_column(id)
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_card_column FOREIGN KEY (column_id) REFERENCES task_column(id) ON DELETE CASCADE
 );
-
-CREATE TABLE card_movement (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    entry_time DATETIME NOT NULL,
-    exit_time DATETIME,
-    card_id BIGINT,
-    column_id BIGINT,
-    CONSTRAINT fk_movement_card FOREIGN KEY (card_id) REFERENCES card(id) ON DELETE CASCADE,
-    CONSTRAINT fk_movement_column FOREIGN KEY (column_id) REFERENCES task_column(id)
+-- Tabela de usuários (se necessário)
+CREATE TABLE IF NOT EXISTS users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE blockage_log (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    `timestamp` DATETIME NOT NULL,
-    reason TEXT,
-    type VARCHAR(50) NOT NULL,
-    card_id BIGINT,
-    CONSTRAINT fk_blockage_card FOREIGN KEY (card_id) REFERENCES card(id) ON DELETE CASCADE
+-- Tabela de relacionamento entre usuários e cards (se necessário)
+CREATE TABLE IF NOT EXISTS user_card (
+    user_id BIGINT NOT NULL,
+    card_id BIGINT NOT NULL,
+    PRIMARY KEY (user_id, card_id),
+    CONSTRAINT fk_user_card_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_user_card_card FOREIGN KEY (card_id) REFERENCES card(id) ON DELETE CASCADE
 );
