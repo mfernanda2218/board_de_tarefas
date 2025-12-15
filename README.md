@@ -13,22 +13,21 @@ Uma aplicação de linha de comando (CLI) para criar e gerenciar boards de taref
   - **Relatórios:** Gere relatórios sobre o tempo de conclusão de tarefas e o histórico de bloqueios.
 
 ## Tecnologias Utilizadas
-
-  - **Java 17+**
-  - **Spring Boot 3+**
-  - **Spring Shell:** Para a interface de linha de comando.
-  - **Spring Data JPA:** Para a persistência de dados.
-  - **MySQL Server 8.0+:** Como banco de dados.
-  - **Flyway:** Para versionamento e migração do schema do banco.
-  - **Maven:** Como gerenciador de dependências e build.
+- **Java 21**
+- **Spring Boot 3.5.5**
+- **Spring Shell 3.4.1** - Interface de linha de comando interativa
+- **Spring Data JPA** - Persistência de dados
+- **PostgreSQL** - Banco de dados relacional
+- **Flyway** - Controle de versão do banco de dados
+- **Maven** - Gerenciamento de dependências
 
 ## Pré-requisitos
 
 Antes de começar, garanta que você tenha os seguintes softwares instalados:
 
-  - JDK 17 ou superior.
+  - JDK 21 ou superior.
   - Apache Maven 3.8 ou superior.
-  - MySQL Server 8.0 ou superior.
+  - PostgrAQL 14 ou superior.
 
 ## Configuração e Execução
 
@@ -39,20 +38,21 @@ Antes de começar, garanta que você tenha os seguintes softwares instalados:
     cd board_de_tarefas
     ```
 
-2.  **Crie o Banco de Dados:**
-    Conecte-se ao seu MySQL e execute o seguinte comando para criar o banco de dados vazio:
+2.  **Configure seu banco de dados**
+
 
     ```sql
-    CREATE DATABASE board_tarefas_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    CREATE DATABASE board_tarefas_db;
+    CREATE USER board_user WITH ENCRYPTED PASSWORD 'sua_senha';
+    GRANT ALL PRIVILEGES ON DATABASE board_tarefas_db TO board_user;
     ```
 
 3.  **Configure a Conexão:**
-    Abra o arquivo `src/main/resources/application.properties` e altere as seguintes linhas com suas credenciais do MySQL:
+    Abra o arquivo `src/main/resources/application.properties` e configure as credenciais:
 
     ```properties
-    spring.datasource.url=jdbc:mysql://localhost:3306/board_tarefas_db?useSSL=false&serverTimezone=UTC
-    spring.datasource.username=seu_usuario_mysql
-    spring.datasource.password=sua_senha_mysql
+    spring.datasource.username=board_user
+    spring.datasource.password=sua_senha
     ```
 
 4.  **Execute a Aplicação:**
